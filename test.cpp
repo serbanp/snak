@@ -1,10 +1,12 @@
 #include <time.h>
 #include <SFML/Graphics.hpp>
+#include <iostream>
+using namespace std;
 using namespace sf;
 
 int size=16;
-int length=20;
-int width=40;
+int length=33;
+int width=30;
 
 int dir=4,dx[5]={1,0,-1,0,0},dy[5]={0,-1,0,1,0},viteza=100,num=1;
 
@@ -21,6 +23,12 @@ void FaMancare(mancare &m)
 {
     m.x=rand()%length;
     m.y=rand()%width;
+    for (int i=0;i<num-1;i++)
+        while (s[i].x==m.x&&s[i].y==m.y)
+    {
+         m.x=rand()%length;
+    m.y=rand()%width;
+    }
 }
 
 void Miscare()
@@ -44,20 +52,17 @@ void Miscare()
     if (s[0].y<0) s[0].y=width;
 
 }
-
-
-int main()
+void game()
 {
     srand(time(NULL));
     s[0].x=rand()%length;
     s[0].y=rand()%width;
-    sf::RenderWindow window(sf::VideoMode(size*length, size*width), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(size*length+size, size*width+size), "SFML works!");
 
     Texture t1,t2,t3;
 	t1.loadFromFile("images/white.png");
 	t2.loadFromFile("images/corpsarpe.png");
     t3.loadFromFile("images/mancare.png");
-
 	Sprite patratAlb(t1);
 	Sprite patratSarpe(t2);
 	Sprite patratMancare(t3);
@@ -68,6 +73,7 @@ int main()
 
     while (window.isOpen())
     {
+
         sf::Event event;
         float timp = clock.getElapsedTime().asMilliseconds();
         while (window.pollEvent(event))
@@ -88,8 +94,8 @@ int main()
         }
         window.clear();
 
-        for (int i=0; i<length; i++)
-         for (int j=0; j<width; j++)
+        for (int i=0; i<=length; i++)
+         for (int j=0; j<=width; j++)
 		  {
 		    patratAlb.setPosition(i*size,j*size);
 		    window.draw(patratAlb);
@@ -105,9 +111,39 @@ int main()
         window.draw(patratMancare);
         for (int i=1;i<num;i++)
        if (s[i].x==s[0].x && s[i].y==s[0].y) window.close();
-
+         if (Keyboard::isKeyPressed(Keyboard::Escape))
+        window.close();
         window.display();
     }
 
+}
+
+
+int main()
+{
+//game();
+sf::RenderWindow window(sf::VideoMode(size*length+size, size*width+size), "SFML works!");
+ Texture t4,t5;
+    t4.loadFromFile("images/men.jpg");
+    t5.loadFromFile("images/men2.jpg");
+	Sprite nebunie(t4);
+	Sprite nebunie2(t5);
+	while (window.isOpen())
+    {window.draw(nebunie);
+    window.display();
+    Event Event;
+    while (window.pollEvent(Event))
+    {
+        if (Event.mouseMove.x>162&&Event.mouseMove.x<401&&Event.mouseMove.y>126&&Event.mouseMove.y<154)
+        {
+            {
+            window.draw(nebunie2);
+            if (Event.mouseButton.button==Mouse::Left) game();
+            window.display();
+            }
+        }
+    if (Keyboard::isKeyPressed(Keyboard::Escape))
+        window.close();}
+    }
     return 0;
 }
