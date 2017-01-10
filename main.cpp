@@ -1,15 +1,13 @@
 #include <time.h>
 #include <SFML/Graphics.hpp>
+#include <iostream>
 using namespace sf;
 
 int size=16;
 int length=20;
 int width=40;
 
-int dir=4,dx[5]={1,0,-1,0,0},dy[5]={0,-1,0,1,0},viteza=100,num=1;
-
-//moveAI retine directiile sarpelui care trebuie luate la fiecare pas
-//nrMovesAI retine numarul de miscari ale sarpelui inteligent
+int dir=4,dx[5]={1,0,-1,0,0},dy[5]={0,-1,0,1,0},viteza=5,num=1;
 
 
 struct sarpe{
@@ -23,14 +21,20 @@ sarpe s[100];
 
 void FaMancare(mancare &m)
 {
-    m.x=rand()%length;
-    m.y=rand()%width;
-    for (int i=0;i<num-1;i++)
-        while (s[i].x==m.x&&s[i].y==m.y)
+    int ok=0;
+    while (ok == 0)
     {
-         m.x=rand()%length;
+        m.x=rand()%length;
         m.y=rand()%width;
+        ok = 1;
+        for (int i=0;i<num-1;i++)
+         if (s[i].x==m.x && s[i].y==m.y)
+          {
+            ok = 0;
+            break;
+          }
     }
+    std::cout<<m.x<<' '<<m.y;
 }
 
 int inteligent()
@@ -51,7 +55,7 @@ int inteligent()
         {
             x = coada[0][prim] + dx[i];
             y = coada[1][prim] + dy[i];
-            if (mat[x][y]==0 && x>=0 && x<=100 && y>=0 && y<=100)
+            if (mat[x][y]==0 && x>=0 && x<length && y>=0 && y<width)
             {
                 mat[x][y]=mat[x-dx[i]][y-dy[i]] + 1;
                 ultim++;
@@ -64,6 +68,12 @@ int inteligent()
     }
     x=m.x;
     y=m.y;
+    if(mat[m.x][m.y]==0)
+    {
+      for (i=0;i<4;i++)
+        if (mat[s[0].x + dx[i]][s[0].y + dy[i]] != -1) return i;
+      return 0;
+    }
     nrMovesAI = 0;
     while (x!=s[0].x || y!=s[0].y)
     {
@@ -94,6 +104,7 @@ int inteligent()
 
 }
 
+
 void Miscare()
 {
     for (int i=num;i>0;i--)
@@ -101,18 +112,18 @@ void Miscare()
         s[i].x=s[i-1].x;
         s[i].y=s[i-1].y;
     }
-    s[0].x+=dx[dir];
-    s[0].y+=dy[dir];
+    s[0].x += dx[dir];
+    s[0].y += dy[dir];
     if (s[0].x==m.x && s[0].y==m.y)
     {
         num++;
         FaMancare(m);
     }
 
-    if (s[0].x>length) s[0].x=0;
-    if (s[0].x<0) s[0].x=length;
-    if (s[0].y>width) s[0].y=0;
-    if (s[0].y<0) s[0].y=width;
+    if (s[0].x>=length) s[0].x=0;
+    if (s[0].x<0) s[0].x=length-1;
+    if (s[0].y>=width) s[0].y=0;
+    if (s[0].y<0) s[0].y=width-1;
     //inteligent
     dir=inteligent();
 }
@@ -123,7 +134,7 @@ int main()
     srand(time(NULL));
     s[0].x=rand()%length;
     s[0].y=rand()%width;
-    sf::RenderWindow window(sf::VideoMode(size*length+size, size*width+size), "Snake");
+    sf::RenderWindow window(sf::VideoMode(size*length, size*width), "Snake");
 
     Texture t1,t2,t3;
 	t1.loadFromFile("images/white.png");
@@ -137,7 +148,6 @@ int main()
     sf:Clock clock;
     m.x=rand()%length;
     m.y=rand()%width;
-
     //inteligent
     dir=inteligent();
 
@@ -151,10 +161,10 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        if (Keyboard::isKeyPressed(Keyboard::Left)) dir=1;
-	    if (Keyboard::isKeyPressed(Keyboard::Right))  dir=3;
-	    if (Keyboard::isKeyPressed(Keyboard::Up)) dir=2;
-		if (Keyboard::isKeyPressed(Keyboard::Down)) dir=0;
+        if (Keyboard::isKeyPressed(Keyboard::Down)) dir=3;
+        if (Keyboard::isKeyPressed(Keyboard::Left)) dir=2;
+        if (Keyboard::isKeyPressed(Keyboard::Up)) dir=1;
+	    if (Keyboard::isKeyPressed(Keyboard::Right))  dir=0;
 
         if (timp>viteza)
         {
@@ -163,8 +173,8 @@ int main()
         }
         window.clear();
 
-        for (int i=0; i<=length; i++)
-         for (int j=0; j<=width; j++)
+        for (int i=0; i<length; i++)
+         for (int j=0; j<width; j++)
 		  {
 		    patratAlb.setPosition(i*size,j*size);
 		    window.draw(patratAlb);
