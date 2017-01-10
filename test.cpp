@@ -110,7 +110,20 @@ void game()
         patratMancare.setPosition(m.x*size,  m.y*size);
         window.draw(patratMancare);
         for (int i=1;i<num;i++)
-       if (s[i].x==s[0].x && s[i].y==s[0].y) window.close();
+       if (s[i].x==s[0].x && s[i].y==s[0].y)
+       {
+           window.close();
+           for (int i=1;i<num;i++)
+            {
+                s[i].x=0;
+                s[i].y=0;
+            }
+            num=1;dir=4;
+             s[0].x+=dy[dir];
+    s[0].y+=dx[dir];
+
+
+       }
          if (Keyboard::isKeyPressed(Keyboard::Escape))
         window.close();
         window.display();
@@ -128,20 +141,21 @@ sf::RenderWindow window(sf::VideoMode(size*length+size, size*width+size), "SFML 
     t5.loadFromFile("images/men2.jpg");
 	Sprite nebunie(t4);
 	Sprite nebunie2(t5);
+	window.clear();
 	while (window.isOpen())
-    {window.draw(nebunie);
-    window.display();
-    Event Event;
-    while (window.pollEvent(Event))
     {
-        if (Event.mouseMove.x>162&&Event.mouseMove.x<401&&Event.mouseMove.y>126&&Event.mouseMove.y<154)
-        {
+    Event Event;
+        while (window.pollEvent(Event))
+    {sf::Vector2i position = sf::Mouse::getPosition();
+    //cout<<position.x<<" "<<position.y<<"\n";
+            if (position.x>583&&position.x<820&&position.y>293&&position.y<319)
             {
-            window.draw(nebunie2);
-            if (Event.mouseButton.button==Mouse::Left) game();
+                window.draw(nebunie2);
+                if (Event::MouseButtonPressed)
+                if (Event.mouseButton.button==Mouse::Left) {game();window.close();}
+                }
+            else window.draw(nebunie);
             window.display();
-            }
-        }
     if (Keyboard::isKeyPressed(Keyboard::Escape))
         window.close();}
     }
