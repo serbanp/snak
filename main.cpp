@@ -4,12 +4,13 @@
 using namespace sf;
 
 int size=16;
-int length=40;
-int width=40;
+int length=33;
+int width=30;
 
 int dx[5]={1,0,-1,0,0},dy[5]={0,-1,0,1,0};
 int viteza=100;
-int num1=0,num2=0,dir1=4,dir2=4;
+int num1=1,num2=1,dir1=4,dir2=4;
+int ok;
 
 int modulo(int a, int b)
 {
@@ -40,7 +41,7 @@ void FaMancare(mancare &m)
             ok = 0;
             break;
           }
-        for (int i=0;i<num1;i++)
+        for (int i=0;i<num2;i++)
          if (s2[i].x==m.x && s2[i].y==m.y)
           {
             ok = 0;
@@ -159,7 +160,7 @@ void Miscare()
     }
 
     //inteligent
-    if (num2>0) dir2=inteligent();
+    if (ok==2) dir2=inteligent();
 }
 
 void AI()
@@ -175,26 +176,32 @@ void Player()
     s1[0].y=abs(rand())%width;
     num1=1;
 }
-
-int main()
+void game()
 {
     sf::RenderWindow window(sf::VideoMode(size*length, size*width), "Snake");
 
-    Texture t1,t2,t3;
-	t1.loadFromFile("images/white.png");
-	t2.loadFromFile("images/corpsarpe.png");
-    t3.loadFromFile("images/mancare.png");
+    Texture teren,cs,mancare,capsarpe,corpai,capai;
 
-	Sprite patratAlb(t1);
-	Sprite patratSarpe(t2);
-	Sprite patratMancare(t3);
+	teren.loadFromFile("images/teren.jpg");
+	cs.loadFromFile("images/corpsarpe.jpg");
+    mancare.loadFromFile("images/mancare.jpg");
+    capsarpe.loadFromFile("images/capsarpe.jpg");
+    corpai.loadFromFile("images/corpai.jpg");
+    capai.loadFromFile("images/capai.jpg");
 
+
+	Sprite patratP(teren);
+	Sprite patratSarpe(cs);
+	Sprite patratMancare(mancare);
+    Sprite patratCap(capsarpe);
+    Sprite corpsai(corpai);
+    Sprite capsai(capai);
 	srand(time(NULL));
 
     sf:Clock clock;
     m.x=abs(rand())%length;
     m.y=abs(rand())%width;
-
+AI();Player();
     while (window.isOpen())
     {
         sf::Event event;
@@ -204,8 +211,6 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        if (Keyboard::isKeyPressed(Keyboard::W)) AI();
-        if (Keyboard::isKeyPressed(Keyboard::S)) Player();
         if (Keyboard::isKeyPressed(Keyboard::Down)) dir1=3;
         if (Keyboard::isKeyPressed(Keyboard::Left)) dir1=2;
         if (Keyboard::isKeyPressed(Keyboard::Up)) dir1=1;
@@ -221,37 +226,77 @@ int main()
         for (int i=0; i<length; i++)
          for (int j=0; j<width; j++)
 		  {
-		    patratAlb.setPosition(i*size,j*size);
-		    window.draw(patratAlb);
+		    patratP.setPosition(i*size,j*size);
+		    window.draw(patratP);
           }
 
 
         //DrawAI(window);
-        for (int i=0;i<num2;i++)
-	     {
-	        patratSarpe.setPosition(s2[i].x*size, s2[i].y*size);
-	        window.draw(patratSarpe);
+        if (ok==2)
+          {
+              for (int i=1;i<num2;i++)
+	        {corpsai.setPosition(s2[i].x*size, s2[i].y*size);
+	        window.draw(corpsai);
          }
-
-        for (int i=1;i<num2;i++)
+              capsai.setPosition(s2[0].x*size,s2[0].y*size);
+          window.draw(capsai);
+            for (int i=1;i<num2;i++)
          if (s2[i].x==s2[0].x && s2[i].y==s2[0].y) window.close();
+    }
 
 
         //DrawPlayer(window);
-        for (int i=0;i<num1;i++)
+        for (int i=1;i<num1;i++)
 	     {
 	        patratSarpe.setPosition(s1[i].x*size, s1[i].y*size);
 	        window.draw(patratSarpe);
          }
-
+        patratCap.setPosition(s1[0].x*size,s1[0].y*size);
+        window.draw(patratCap);
 
         for (int i=1;i<num1;i++)
          if (s1[i].x==s1[0].x && s1[i].y==s1[0].y) window.close();
         patratMancare.setPosition(m.x*size,  m.y*size);
         window.draw(patratMancare);
-
+            if (Keyboard::isKeyPressed(Keyboard::Escape))
+        window.close();
         window.display();
     }
 
-    return 0;
+}
+void meniu()
+{
+    sf::RenderWindow window(sf::VideoMode(size*length+size, size*width+size), "cine citeste asta");
+ Texture t4,t5;
+ int m1x,m1y;
+    t4.loadFromFile("images/men.jpg");
+    t5.loadFromFile("images/men2.jpg");
+	Sprite nebunie(t4);
+	Sprite nebunie2(t5);
+	while (window.isOpen())
+    {sf::Vector2u size = window.getSize();
+unsigned int width = size.x;
+unsigned int height = size.y;
+sf::Vector2i localPosition = sf::Mouse::getPosition(window);
+m1x=size.x*100/localPosition.x;
+m1y=size.y*100/localPosition.y;
+    Event Event;
+        while (window.pollEvent(Event))
+    {
+    if (m1x>136&&m1x<332&&m1y>324&&m1y<393)
+            {
+                window.draw(nebunie2);
+                if (Event::MouseButtonPressed)
+                if (Event.mouseButton.button==Mouse::Left) {window.close();ok=1;game();}
+                }
+            else window.draw(nebunie);
+            window.display();
+    if (Keyboard::isKeyPressed(Keyboard::Escape))
+        window.close();}
+    }
+}
+
+int main()
+{
+    meniu();
 }
