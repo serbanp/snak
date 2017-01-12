@@ -282,8 +282,9 @@ void meniu()
 unsigned int width = size.x;
 unsigned int height = size.y;
 sf::Vector2i localPosition = sf::Mouse::getPosition(window);
-m1x=size.x*100/localPosition.x;
-m1y=size.y*100/localPosition.y;
+if (localPosition.x>0&&localPosition.y>0)
+{m1x=size.x*100/localPosition.x;
+m1y=size.y*100/localPosition.y;}
     Event Event;
         while (window.pollEvent(Event))
     {
