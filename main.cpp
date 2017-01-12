@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 using namespace sf;
+using namespace std;
 
 int size=16;
 int length=33;
@@ -201,7 +202,7 @@ void game()
     sf:Clock clock;
     m.x=abs(rand())%length;
     m.y=abs(rand())%width;
-AI();Player();
+    AI();Player();
     while (window.isOpen())
     {
         sf::Event event;
@@ -266,13 +267,16 @@ AI();Player();
 }
 void meniu()
 {
-    sf::RenderWindow window(sf::VideoMode(size*length+size, size*width+size), "cine citeste asta");
- Texture t4,t5;
+    sf::RenderWindow window(sf::VideoMode(size*length+size, size*width+size), "Snake");
+ Texture meniup,meniu2,meniu3;
  int m1x,m1y;
-    t4.loadFromFile("images/men.jpg");
-    t5.loadFromFile("images/men2.jpg");
-	Sprite nebunie(t4);
-	Sprite nebunie2(t5);
+    meniup.loadFromFile("images/meniu.jpg");
+    meniu2.loadFromFile("images/meniu2.jpg");
+    meniu3.loadFromFile("images/meniu3.jpg");
+	Sprite menp(meniup);
+	Sprite men2(meniu2);
+	Sprite men3(meniu3);
+
 	while (window.isOpen())
     {sf::Vector2u size = window.getSize();
 unsigned int width = size.x;
@@ -285,11 +289,19 @@ m1y=size.y*100/localPosition.y;
     {
     if (m1x>136&&m1x<332&&m1y>324&&m1y<393)
             {
-                window.draw(nebunie2);
+                window.draw(men2);
                 if (Event::MouseButtonPressed)
                 if (Event.mouseButton.button==Mouse::Left) {window.close();ok=1;game();}
                 }
-            else window.draw(nebunie);
+    else if (m1x>123&&m1x<332&&m1y>207&&m1y<237)
+     {
+                window.draw(men3);
+                if (Event::MouseButtonPressed)
+                if (Event.mouseButton.button==Mouse::Left) {window.close();ok=2;game();}
+                }
+            else window.draw(menp);
+
+
             window.display();
     if (Keyboard::isKeyPressed(Keyboard::Escape))
         window.close();}
