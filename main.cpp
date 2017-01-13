@@ -189,7 +189,7 @@ void game()
     capsarpe.loadFromFile("images/capsarpe.jpg");
     corpai.loadFromFile("images/corpai.jpg");
     capai.loadFromFile("images/capai.jpg");
-
+    ok=3;
 
 	Sprite patratP(teren);
 	Sprite patratSarpe(cs);
@@ -212,11 +212,15 @@ void game()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        if (Keyboard::isKeyPressed(Keyboard::Down)) dir1=3;
-        if (Keyboard::isKeyPressed(Keyboard::Left)) dir1=2;
-        if (Keyboard::isKeyPressed(Keyboard::Up)) dir1=1;
-	    if (Keyboard::isKeyPressed(Keyboard::Right))  dir1=0;
+        if (Keyboard::isKeyPressed(Keyboard::Down) && dir1!=1) dir1=3;
+        else  if (Keyboard::isKeyPressed(Keyboard::Up) && dir1!=3) dir1=1;
+        else if (Keyboard::isKeyPressed(Keyboard::Left) && dir1!=0) dir1=2;
+	    else if (Keyboard::isKeyPressed(Keyboard::Right) && dir1!=2)  dir1=0;
 
+        if (Keyboard::isKeyPressed(Keyboard::S) && dir2!=1) dir2=3;
+        else if (Keyboard::isKeyPressed(Keyboard::A) && dir2!=0) dir2=2;
+        else if (Keyboard::isKeyPressed(Keyboard::W) && dir2!=3) dir2=1;
+	    else if (Keyboard::isKeyPressed(Keyboard::D) && dir2!=2)  dir2=0;
         if (timp>viteza)
         {
             clock.restart();
@@ -233,7 +237,7 @@ void game()
 
 
         //DrawAI(window);
-        if (ok==2)
+        if (ok>=2)
           {
               for (int i=1;i<num2;i++)
 	        {corpsai.setPosition(s2[i].x*size, s2[i].y*size);
