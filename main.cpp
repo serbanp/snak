@@ -1,6 +1,7 @@
 #include <time.h>
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <string.h>
 using namespace sf;
 using namespace std;
 
@@ -12,6 +13,7 @@ int dx[5]={1,0,-1,0,0},dy[5]={0,-1,0,1,0};
 int viteza=100;
 int num1=1,num2=1,dir1=4,dir2=4;
 int ok;
+int nrScores;
 
 int modulo(int a, int b)
 {
@@ -27,6 +29,88 @@ struct mancare{
 } m;
 
 sarpe s1[10000],s2[10000];
+
+struct score{
+    char name[255];
+    int val;
+};
+
+struct score{
+    char name[255];
+    int val;
+};
+
+score board[100],curent1,curent2;
+
+void readLeaderboard()
+{
+    fin>>nrScores;
+    fin.get();
+    for (int i=nrScores-1;i>=0;i--)
+    {
+        fin>>board[i].val;
+        fin.getline(board[i].name,255);
+    }
+}
+
+void writeLeaderboard()
+{
+    fout<<nrScores<<'\n';
+    for (int i=nrScores-1;i>=0;i--)
+    {
+        fout<<board[i].val<<' ';
+        fout<<board[i].name<<'\n';
+    }
+}
+
+void insertInLeaderboard(score x)
+{
+
+    int i,j;
+
+    for (i=0;i<nrScores;i++)
+     if (strcmp(board[i].name,x.name)==0)
+     {
+      for (j=i;j<nrScores-1;j++)
+      {
+        strcpy(board[j].name,board[j+1].name);
+        board[j].val=board[j+1].val;
+      }
+      nrScores--;
+      break;
+     }
+
+    if (nrScores==0)
+    {
+        nrScores++;
+        strcpy(board[0].name,x.name);
+        board[0].val=x.val;
+    }
+    else
+    {
+     if (board[nrScores-1].val < x.val)
+      {
+           nrScores++;
+           strcpy(board[nrScores-1].name,x.name);
+           board[nrScores-1].val=x.val;
+      }
+     else
+     for (i=0;i<nrScores;i++)
+      if (board[i].val>=x.val)
+       {
+           nrScores++;
+           for (j=nrScores;j>=i+1;j--)
+           {
+             strcpy(board[j].name,board[j-1].name);
+             board[j].val=board[j-1].val;
+           }
+         strcpy(board[i].name,x.name);
+         board[i].val=x.val;
+         break;
+      }
+    }
+}
+
 
 void FaMancare(mancare &m)
 {
@@ -189,7 +273,6 @@ void game()
     capsarpe.loadFromFile("images/capsarpe.jpg");
     corpai.loadFromFile("images/corpai.jpg");
     capai.loadFromFile("images/capai.jpg");
-    ok=3;
 
 	Sprite patratP(teren);
 	Sprite patratSarpe(cs);
@@ -269,6 +352,7 @@ void game()
     }
 
 }
+
 void meniu()
 {
     sf::RenderWindow window(sf::VideoMode(size*length+size, size*width+size), "Snake");
