@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <sstream>
+#include <cstring>
 
 using namespace sf;
 using namespace std;
@@ -14,6 +15,7 @@ int dx[5]={1,0,-1,0,0},dy[5]={0,-1,0,1,0};
 int viteza=100;
 int num1=1,num2=1,dir1=4,dir2=4;
 int ok=0;
+char s[50];
 int modulo(int a, int b)
 {
     return (a%b+b)%b;
@@ -301,17 +303,8 @@ void game()
 
         for (int i=1;i<num1;i++)
          if (s1[i].x==s1[0].x && s1[i].y==s1[0].y)
-         {window.close();
-         sf::RenderWindow window(sf::VideoMode(size*length, size*width), "INTRODU NUMELE");
-         String sentence;
-         Font font;
-         font.loadFromFile("arial.ttf");
-
-         Text text(sentence,font,40);
-         text.setColor(Color(44,127,255));
-         text.setStyle(Text::Bold);
-
-         while (window.isOpen())
+         window.close();
+        /* while (window.isOpen())
          {Event Event;
          while (window.pollEvent(Event))
          {if (Event::TextEntered)
@@ -326,14 +319,14 @@ void game()
          window.display();
          window.clear();
          if (Keyboard::isKeyPressed(Keyboard::Escape))
-        window.close();
+        {window.close();}
          }
-         }
+         */
 
         patratMancare.setPosition(m.x*size,  m.y*size);
         window.draw(patratMancare);
             if (Keyboard::isKeyPressed(Keyboard::Escape))
-        {window.close();meniu();score1=0;score2=0;}
+        {window.close();score1=0;score2=0;}
 
     if (ok==1)
         {
@@ -403,7 +396,7 @@ void meniu()
 {
     sf::RenderWindow window(sf::VideoMode(size*length+size, size*width+size), "Snake");
  Texture meniup,meniu2,meniu3,meniu4,meniu5;
- int m1x,m1y;
+ int m1x,m1y,aj=0;
     meniup.loadFromFile("images/meniu.jpg");
     meniu2.loadFromFile("images/meniu2.jpg");
     meniu3.loadFromFile("images/meniu3.jpg");
@@ -431,9 +424,10 @@ m1y=size.y*100/localPosition.y;}
             {
                 window.draw(men2);
                 if (Event::MouseButtonPressed)
-                if (Event.mouseButton.button==Mouse::Left)
+                if (Event.mouseButton.button==Mouse::Left&&aj==0)
                 {  score1=0;score2=0;
-                    window.close();ok=1;game();}
+                window.close();
+                    ok=1;game();}
 }
     else if (m1x>123&&m1x<332&&m1y>207&&m1y<237)
      {
@@ -449,12 +443,6 @@ m1y=size.y*100/localPosition.y;}
                 if (Event.mouseButton.button==Mouse::Left) {score1=0;score2=0;
                     window.close();ok=3;game();}
     }
-    else if (m1x>130&&m1x<332&&m1y>123&&m1y<131)
-        {
-    window.draw(men5);
-                if (Event::MouseButtonPressed)
-                if (Event.mouseButton.button==Mouse::Left) {int urmeaza=1;}//leaderboard}
-        }
         else window.draw(menp);
             window.display();
     if (Keyboard::isKeyPressed(Keyboard::Escape))
