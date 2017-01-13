@@ -276,7 +276,8 @@ void meniu()
 	Sprite menp(meniup);
 	Sprite men2(meniu2);
 	Sprite men3(meniu3);
-
+    window.draw(menp);
+    window.display();
 	while (window.isOpen())
     {sf::Vector2u size = window.getSize();
 unsigned int width = size.x;
