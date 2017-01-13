@@ -1,20 +1,19 @@
 #include <time.h>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <string.h>
+#include <sstream>
+
 using namespace sf;
 using namespace std;
 
 int size=16;
 int length=33;
 int width=30;
-
+int score1=0,score2=0;
 int dx[5]={1,0,-1,0,0},dy[5]={0,-1,0,1,0};
 int viteza=100;
 int num1=1,num2=1,dir1=4,dir2=4;
-int ok;
-int nrScores;
-
+int ok=0;
 int modulo(int a, int b)
 {
     return (a%b+b)%b;
@@ -29,89 +28,8 @@ struct mancare{
 } m;
 
 sarpe s1[10000],s2[10000];
-
-struct score{
-    char name[255];
-    int val;
-};
-
-struct score{
-    char name[255];
-    int val;
-};
-
-score board[100],curent1,curent2;
-
-void readLeaderboard()
-{
-    fin>>nrScores;
-    fin.get();
-    for (int i=nrScores-1;i>=0;i--)
-    {
-        fin>>board[i].val;
-        fin.getline(board[i].name,255);
-    }
-}
-
-void writeLeaderboard()
-{
-    fout<<nrScores<<'\n';
-    for (int i=nrScores-1;i>=0;i--)
-    {
-        fout<<board[i].val<<' ';
-        fout<<board[i].name<<'\n';
-    }
-}
-
-void insertInLeaderboard(score x)
-{
-
-    int i,j;
-
-    for (i=0;i<nrScores;i++)
-     if (strcmp(board[i].name,x.name)==0)
-     {
-      for (j=i;j<nrScores-1;j++)
-      {
-        strcpy(board[j].name,board[j+1].name);
-        board[j].val=board[j+1].val;
-      }
-      nrScores--;
-      break;
-     }
-
-    if (nrScores==0)
-    {
-        nrScores++;
-        strcpy(board[0].name,x.name);
-        board[0].val=x.val;
-    }
-    else
-    {
-     if (board[nrScores-1].val < x.val)
-      {
-           nrScores++;
-           strcpy(board[nrScores-1].name,x.name);
-           board[nrScores-1].val=x.val;
-      }
-     else
-     for (i=0;i<nrScores;i++)
-      if (board[i].val>=x.val)
-       {
-           nrScores++;
-           for (j=nrScores;j>=i+1;j--)
-           {
-             strcpy(board[j].name,board[j-1].name);
-             board[j].val=board[j-1].val;
-           }
-         strcpy(board[i].name,x.name);
-         board[i].val=x.val;
-         break;
-      }
-    }
-}
-
-
+void meniu();
+void game();
 void FaMancare(mancare &m)
 {
     int ok=0;
@@ -234,13 +152,13 @@ void Miscare()
 
     if (s1[0].x==m.x && s1[0].y==m.y)
     {
-        num1++;
+        num1++;score1++;
         FaMancare(m);
     }
     else
      if (s2[0].x==m.x && s2[0].y==m.y)
     {
-        num2++;
+        num2++;score2++;
         FaMancare(m);
     }
 
@@ -282,6 +200,7 @@ void game()
     Sprite capsai(capai);
 	srand(time(NULL));
 
+
     sf:Clock clock;
     m.x=abs(rand())%length;
     m.y=abs(rand())%width;
@@ -295,21 +214,59 @@ void game()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        if (Keyboard::isKeyPressed(Keyboard::Down) && dir1!=1) dir1=3;
-        else  if (Keyboard::isKeyPressed(Keyboard::Up) && dir1!=3) dir1=1;
-        else if (Keyboard::isKeyPressed(Keyboard::Left) && dir1!=0) dir1=2;
-	    else if (Keyboard::isKeyPressed(Keyboard::Right) && dir1!=2)  dir1=0;
+        if (Keyboard::isKeyPressed(Keyboard::Down))
+        {
+            if (num1==1||dir1!=1)
+        dir1=3;
+        }
+        else  if (Keyboard::isKeyPressed(Keyboard::Up))
+        {
+            if (num1==1||dir1!=3)
+        dir1=1;
+        }
+        else if (Keyboard::isKeyPressed(Keyboard::Left))
+        {
+            if (num1==1||dir1!=0)
+        dir1=2;
+            }
+	    else if (Keyboard::isKeyPressed(Keyboard::Right))
+	    {
+	        if (num1==1||dir1!=2)
+        dir1=0;
+	    }
 
-        if (Keyboard::isKeyPressed(Keyboard::S) && dir2!=1) dir2=3;
-        else if (Keyboard::isKeyPressed(Keyboard::A) && dir2!=0) dir2=2;
-        else if (Keyboard::isKeyPressed(Keyboard::W) && dir2!=3) dir2=1;
-	    else if (Keyboard::isKeyPressed(Keyboard::D) && dir2!=2)  dir2=0;
+        if (ok==3)
+
+    {
+
+            if (Keyboard::isKeyPressed(Keyboard::S))
+        {
+            if (num2==1||dir2!=1)
+        dir2=3;
+        }
+        else if (Keyboard::isKeyPressed(Keyboard::A))
+        {
+            if (num2==1||dir2!=0)
+        dir2=2;
+        }
+        else if (Keyboard::isKeyPressed(Keyboard::W))
+        {
+            if (num2==1||dir2!=3)
+        dir2=1;
+        }
+	    else if (Keyboard::isKeyPressed(Keyboard::D))
+	    {
+	        if (num2==1||dir2!=2)
+        dir2=0;
+	    }
+    }
         if (timp>viteza)
         {
             clock.restart();
             Miscare();
         }
         window.clear();
+
 
         for (int i=0; i<length; i++)
          for (int j=0; j<width; j++)
@@ -343,27 +300,120 @@ void game()
         window.draw(patratCap);
 
         for (int i=1;i<num1;i++)
-         if (s1[i].x==s1[0].x && s1[i].y==s1[0].y) window.close();
+         if (s1[i].x==s1[0].x && s1[i].y==s1[0].y)
+         {window.close();
+         sf::RenderWindow window(sf::VideoMode(size*length, size*width), "INTRODU NUMELE");
+         String sentence;
+         Font font;
+         font.loadFromFile("arial.ttf");
+
+         Text text(sentence,font,40);
+         text.setColor(Color(44,127,255));
+         text.setStyle(Text::Bold);
+
+         while (window.isOpen())
+         {Event Event;
+         while (window.pollEvent(Event))
+         {if (Event::TextEntered)
+         if (Event.text.unicode>=97&&Event.text.unicode<=122)
+         sentence+=(char)Event.text.unicode;
+         else if (Event.text.unicode==8&&sentence.getSize()>0)
+         sentence.erase(sentence.getSize()-1,sentence.getSize());
+         text.setString(sentence);
+         break;
+         }
+        window.draw(text);
+         window.display();
+         window.clear();
+         if (Keyboard::isKeyPressed(Keyboard::Escape))
+        window.close();
+         }
+         }
+
         patratMancare.setPosition(m.x*size,  m.y*size);
         window.draw(patratMancare);
             if (Keyboard::isKeyPressed(Keyboard::Escape))
-        window.close();
+        {window.close();meniu();score1=0;score2=0;}
+
+    if (ok==1)
+        {
+       sf::Font arial;
+    arial.loadFromFile("arial.ttf");
+    std::ostringstream ssScor;
+    ssScor<<"Player : "<<score1;
+    sf::Text Scor;
+    Scor.setCharacterSize(20    );
+    Scor.setPosition({10,10});
+    Scor.setFont(arial);
+    Scor.setString(ssScor.str());
+    window.draw(Scor);}
+
+    else if (ok==2)
+
+    {sf::Font arial;
+    arial.loadFromFile("arial.ttf");
+    std::ostringstream ssScor;
+    ssScor<<"Player : "<<score1;
+    sf::Text Scor;
+    Scor.setCharacterSize(20);
+    Scor.setPosition({10,10});
+    Scor.setFont(arial);
+    Scor.setString(ssScor.str());
+    window.draw(Scor);
+
+    std::ostringstream ssScor2;
+    ssScor2<<"200 IQ : "<<score2;
+    sf::Text Scor2;
+    Scor2.setCharacterSize(20);
+    Scor2.setPosition({10,50});
+    Scor2.setFont(arial);
+    Scor2.setString(ssScor2.str());
+    window.draw(Scor2);
+}
+    else if (ok==3)
+   {
+       sf::Font arial;
+    arial.loadFromFile("arial.ttf");
+    std::ostringstream ssScor;
+    ssScor<<"Player 1 : "<<score1;
+    sf::Text Scor;
+    Scor.setCharacterSize(20);
+    Scor.setPosition({10,10});
+    Scor.setFont(arial);
+    Scor.setString(ssScor.str());
+    window.draw(Scor);
+
+    std::ostringstream ssScor2;
+    ssScor2<<"Player 2 : "<<score2;
+    sf::Text Scor2;
+    Scor2.setCharacterSize(20);
+    Scor2.setPosition({10,50});
+    Scor2.setFont(arial);
+    Scor2.setString(ssScor2.str());
+    window.draw(Scor2);
+}
         window.display();
     }
 
+
 }
+
 
 void meniu()
 {
     sf::RenderWindow window(sf::VideoMode(size*length+size, size*width+size), "Snake");
- Texture meniup,meniu2,meniu3;
+ Texture meniup,meniu2,meniu3,meniu4,meniu5;
  int m1x,m1y;
     meniup.loadFromFile("images/meniu.jpg");
     meniu2.loadFromFile("images/meniu2.jpg");
     meniu3.loadFromFile("images/meniu3.jpg");
+    meniu4.loadFromFile("images/meniu4.jpg");
+    meniu5.loadFromFile("images/meniu5.jpg");
 	Sprite menp(meniup);
 	Sprite men2(meniu2);
 	Sprite men3(meniu3);
+	Sprite men4(meniu4);
+	Sprite men5(meniu5);
     window.draw(menp);
     window.display();
 	while (window.isOpen())
@@ -381,17 +431,31 @@ m1y=size.y*100/localPosition.y;}
             {
                 window.draw(men2);
                 if (Event::MouseButtonPressed)
-                if (Event.mouseButton.button==Mouse::Left) {window.close();ok=1;game();}
-                }
+                if (Event.mouseButton.button==Mouse::Left)
+                {  score1=0;score2=0;
+                    window.close();ok=1;game();}
+}
     else if (m1x>123&&m1x<332&&m1y>207&&m1y<237)
      {
                 window.draw(men3);
                 if (Event::MouseButtonPressed)
-                if (Event.mouseButton.button==Mouse::Left) {window.close();ok=2;game();}
+                if (Event.mouseButton.button==Mouse::Left) {score1=0;score2=0;
+                    window.close();ok=2;game();}
                 }
-            else window.draw(menp);
-
-
+    else if (m1x>149&&m1x<332&&m1y>155&&m1y<172)
+    {
+        window.draw(men4);
+                if (Event::MouseButtonPressed)
+                if (Event.mouseButton.button==Mouse::Left) {score1=0;score2=0;
+                    window.close();ok=3;game();}
+    }
+    else if (m1x>130&&m1x<332&&m1y>123&&m1y<131)
+        {
+    window.draw(men5);
+                if (Event::MouseButtonPressed)
+                if (Event.mouseButton.button==Mouse::Left) {int urmeaza=1;}//leaderboard}
+        }
+        else window.draw(menp);
             window.display();
     if (Keyboard::isKeyPressed(Keyboard::Escape))
         window.close();}
